@@ -160,6 +160,44 @@ export const constantRoutes = [
     ]
   },
 
+  {
+    path: '/category',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'Category',
+        component: () => import('@/views/category/index'),
+        meta: { title: 'Category', icon: 'form' }
+      }
+    ]
+  },
+
+  {
+    path: '/article',
+    component: Layout,
+    name: 'Article',
+    redirect: '/article/list',
+    meta: {
+      title: 'Article',
+      icon: 'nested'
+    },
+    children: [
+      {
+        path: 'list',
+        name: 'List',
+        component: () => import('@/views/article/list'),
+        meta: { title: 'List', icon: 'form' }
+      },
+      {
+        path: 'edit',
+        name: 'Edit',
+        component: () => import('@/views/article/edit'),
+        meta: { title: 'Edit', icon: 'form' }
+      }
+    ]
+  },
+
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]
