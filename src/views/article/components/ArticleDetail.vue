@@ -7,7 +7,7 @@
       <el-select v-model="form.categories" multiple placeholder="请选择">
         <el-option
           v-for="item in categories"
-          :key="item.id"
+          :key="item.category"
           :label="item.category"
           :value="item.id"
         />
@@ -80,12 +80,13 @@ export default {
   methods: {
     async getCategories() {
       const { data } = await getCategories()
-      console.log(data)
       this.categories = data
     },
 
     async getArticle(id) {
       const { data } = await getArticle(id)
+      data.categories = data.categoryIds
+      this.$refs.editor.invoke('setHtml', data.content)
       this.form = data
     },
 

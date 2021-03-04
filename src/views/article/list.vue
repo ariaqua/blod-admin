@@ -1,7 +1,5 @@
 <template>
   <div class="app-container">
-    <el-button type="primary" icon="el-icon-plus" @click="submit('ruleForm')">submit</el-button>
-    <br>
     <el-table
       :data="articles"
       border
