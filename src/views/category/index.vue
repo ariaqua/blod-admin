@@ -51,11 +51,11 @@ import { getCategories, createCategory, deleteCategory, updateCategory } from '@
 import { formatTime } from '@/filters/index'
 
 export default {
+  name: 'Categories',
   components: {},
   props: [],
   data() {
     return {
-      visible: false,
       form: {
         category: ''
       },
@@ -77,7 +77,7 @@ export default {
   methods: {
 
     validate() {
-      console.log(this.form.category)
+      // console.log(this.form.category)
     },
 
     formatTime(row, column) {
@@ -96,9 +96,9 @@ export default {
       const category = this.$refs['category']
       await this.$nextTick()
       if (!this.form.category) {
-        console.log('blur')
+        // console.log('blur')
         category.resetField()
-        console.log('blur22')
+        // console.log('blur22')
       }
     },
 
@@ -110,7 +110,7 @@ export default {
     submit(formName) {
       this.$refs[formName].validate(async(valid) => {
         if (valid) {
-          console.log({ category: this.category })
+          // console.log({ category: this.category })
           await createCategory({ category: this.form.category })
           this.$message({
             type: 'success',
@@ -118,7 +118,7 @@ export default {
           })
           this.getCategories()
         } else {
-          console.log('error submit!!')
+          // console.log('error submit!!')
           return false
         }
       })

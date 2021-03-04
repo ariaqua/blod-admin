@@ -190,10 +190,16 @@ export const constantRoutes = [
         meta: { title: 'List', icon: 'form' }
       },
       {
-        path: 'edit',
+        path: 'edit/:id',
         name: 'Edit',
-        component: () => import('@/views/article/edit'),
-        meta: { title: 'Edit', icon: 'form' }
+        hidden: true,
+        component: () => import('@/views/article/edit')
+      },
+      {
+        path: 'create',
+        name: 'Create',
+        component: () => import('@/views/article/create'),
+        meta: { title: 'Create', icon: 'form' }
       }
     ]
   },
