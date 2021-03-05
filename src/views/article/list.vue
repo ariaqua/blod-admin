@@ -43,7 +43,7 @@
           <router-link :to="'/article/edit/'+row.id">
             <el-button icon="el-icon-edit" circle />
           </router-link>
-          <el-button icon="el-icon-delete" circle type="danger" @click="remove(row)" />
+          <el-button icon="el-icon-delete" circle type="danger" style="margin-left: 10px" @click="remove(row)" />
         </template>
       </el-table-column>
     </el-table>
@@ -51,7 +51,7 @@
 </template>
 
 <script>
-import { getArticles, deleteArticle, updateArticle } from '@/api/article'
+import { getArticles, deleteArticle } from '@/api/article'
 import { formatTime } from '@/filters/index'
 export default {
   name: 'ArticleList',

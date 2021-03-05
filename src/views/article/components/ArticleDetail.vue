@@ -1,26 +1,28 @@
 <template>
   <div class="app-container">
-    <el-form :model="form">
+    <el-form ref="articleForm" :model="form">
       <el-form-item label="title">
         <el-input v-model="form.title" />
       </el-form-item>
-      <el-select v-model="form.categories" multiple placeholder="请选择">
-        <el-option
-          v-for="item in categories"
-          :key="item.category"
-          :label="item.category"
-          :value="item.id"
-        />
-      </el-select>
-      <el-form-item label="articleState">
-        <el-radio-group v-model="form.articleState">
+      <el-form-item label="categories">
+        <el-select v-model="form.categories" multiple>
+          <el-option
+            v-for="item in categories"
+            :key="item.category"
+            :label="item.category"
+            :value="item.id"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="article state">
+        <el-radio-group v-model="form.article_state">
           <el-radio label="public" />
           <el-radio label="private" />
           <el-radio label="draft" />
         </el-radio-group>
       </el-form-item>
-      <el-form-item label="commentState">
-        <el-radio-group v-model="form.commentStat">
+      <el-form-item label="comment state">
+        <el-radio-group v-model="form.comment_state">
           <el-radio label="public" />
           <el-radio label="private" />
           <el-radio label="lock" />
@@ -29,13 +31,20 @@
       <el-form-item label="pictrue">
         <el-input v-model="form.pictrue" />
       </el-form-item>
+      <el-form-item label="theme">
+        <el-input v-model="form.theme" />
+      </el-form-item>
+      <el-form-item label="music">
+        <el-input v-model="form.music" />
+      </el-form-item>
       <el-form-item label="summary">
         <el-input v-model="form.summary" :autosize="{ minRows: 2, maxRows: 4 }" type="textarea" />
       </el-form-item>
       <editor ref="editor" height="400px" />
       <el-form-item style="margin-top: 24px">
-        <el-button @click="priview">priview</el-button>
+        <el-button type="success" @click="priview">priview</el-button>
         <el-button type="primary" @click="submit">submit</el-button>
+        <el-button type="warning" @click="reset('articleForm')">reset</el-button>
       </el-form-item>
     </el-form>
   </div>
@@ -44,7 +53,7 @@
 <script>
 import { Editor } from '@toast-ui/vue-editor'
 import { getCategories } from '@/api/category'
-import { createArticle, getArticle } from '@/api/article'
+import { createArticle, getArticle, updateArticle } from '@/api/article'
 export default {
   name: 'Editor',
   components: {
@@ -95,15 +104,28 @@ export default {
       const formattedCategories = data.categories.map(category => ({ id: category }))
       data.categories = formattedCategories
       data.content = this.$refs.editor.invoke('getHtml')
-      await createArticle(data)
+      this.isEdit
+        ? await updateArticle(this.$route.params.id, data)
+        : await createArticle(data)
       this.$message({
         type: 'success',
-        message: 'create article success'
+        message: `${this.isEdit ? 'update' : 'create'} article success`
       })
     },
 
     priview() {
       alert('priview')
+    },
+
+    reset(formName) {
+      // todo, bug: reset form does not work
+      this.$confirm(`Are you sure to reset this form`, 'tip', {
+        confirmButtonText: 'confirm',
+        cancelButtonText: 'cancel',
+        type: 'warning'
+      }).then(() => {
+        this.$refs[formName].resetFields()
+      }).catch(() => {})
     }
 
   }

@@ -204,6 +204,19 @@ export const constantRoutes = [
     ]
   },
 
+  {
+    path: '/album',
+    component: Layout,
+    children: [
+      {
+        path: 'pictrue',
+        name: 'Pictrue',
+        component: () => import('@/views/album/pictrue'),
+        meta: { title: 'Pictrue', icon: 'form' }
+      }
+    ]
+  },
+
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]
