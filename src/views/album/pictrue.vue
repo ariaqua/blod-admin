@@ -1,139 +1,224 @@
 <template>
   <div class="app-container">
     <el-tabs v-model="activeName" class="tabs" @tab-click="tabClick">
-      <el-tab-pane label="background image" name="first">
-        <el-image
-          v-for="url in urls"
-          :key="url"
+      <el-tab-pane
+        v-for="type in pictureTypes"
+        :key="type"
+        :label="type"
+        :name="type"
+        class="pictures-container"
+      >
+        <div v-for="picture in pictures" :key="picture.id" :class="['picture-wrapper', isBigPicture ? 'w-b' : 'w-s']">
+          <el-image
+            :src="picture.url"
+            lazy
+            fit="cover"
+            :preview-src-list="picturesPreview"
+            class="picture"
+          >
+            <div
+              slot="placeholder"
+              v-loading="true"
+              class="image-slot"
+              element-loading-text="loading..."
+              element-loading-spinner="el-icon-loading"
+              element-loading-background="rgba(0, 0, 0, 0.8)"
+            />
+            <div slot="error" class="image-slot">
+              <i class="el-icon-picture-outline" />
+              <span>failed</span>
+            </div>
+          </el-image>
+          <div class="meta">
+            <p class="name">{{ picture.name || 'Unnamed' }}</p>
+            <p v-if="isBigPicture" class="desc">{{ picture.desc || 'No description information' }}</p>
+            <div class="controls">
+              <p class="link" @click="handleClip(picture.url)">
+                <span v-if="isBigPicture">link</span>
+                <i class="el-icon-paperclip" />
+              </p>
+              <p class="link">
+                <span v-if="isBigPicture">edit</span>
+                <i class="el-icon-edit" />
+              </p>
+              <p class="link">
+                <span v-if="isBigPicture">remove</span>
+                <i class="el-icon-delete" />
+              </p>
+            </div>
 
-          :src="url"
-          lazy
-          fit="cover"
-          :preview-src-list="urls"
-          style="width: 200px; height: 200px; margin: 0 10px"
-        >
-          <div
-            slot="placeholder"
-            v-loading="true"
-            class="image-slot"
-            element-loading-text="拼命加载中"
-            element-loading-spinner="el-icon-loading"
-            element-loading-background="rgba(0, 0, 0, 0.8)"
-          />
-        </el-image>
+          </div>
+        </div>
       </el-tab-pane>
-      <el-tab-pane ref="articleHeaderImage" label="article header image" lazy name="second">
-        <el-image
-          v-for="url in urls"
-          :key="url"
-
-          :src="url"
-          lazy
-          fit="cover"
-          :preview-src-list="urls"
-          style="width: 200px; height: 200px; margin: 0 10px"
-        >
-          <div
-            slot="placeholder"
-            v-loading="true"
-            class="image-slot"
-            element-loading-text="拼命加载中"
-            element-loading-spinner="el-icon-loading"
-            element-loading-background="rgba(0, 0, 0, 0.8)"
-          />
-        </el-image>
-      </el-tab-pane>
-      <el-tab-pane label="article content image" lazy name="third">角色管理</el-tab-pane>
-      <el-tab-pane label="avatar" lazy name="fourth">角色管理</el-tab-pane>
-      <el-tab-pane label="others" lazy name="five">定时任务补偿</el-tab-pane>
     </el-tabs>
-    <el-upload
-      class="avatar-uploader"
-      action="http://localhost:9528/api/album/upload"
-      :show-file-list="false"
-      :on-success="handleAvatarSuccess"
-      :before-upload="beforeAvatarUpload"
-      :headers="uploadHeader"
-    >
-      <img v-if="imageUrl" :src="imageUrl" class="avatar">
-      <i v-else class="el-icon-plus avatar-uploader-icon" />
-    </el-upload>
+    <floating-btn @click.native="dialogVisible = true" />
+    <el-dialog title="upload" :visible.sync="dialogVisible">
+      <upload file-type="picture" />
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { getToken } from '@/utils/auth'
+import Upload from '@/components/upload'
+import FloatingBtn from '@/components/FloatingBtn'
+import { FileType, PictureType, pictureTypes } from '@/components/upload/type'
+import { find } from '@/api/album'
 export default {
+  components: {
+    Upload,
+    FloatingBtn
+  },
   data() {
     return {
-      activeName: 'first',
-      imageUrl: '',
-      urls: [
-        'https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg',
-        'https://fuss10.elemecdn.com/1/34/19aa98b1fcb2781c4fba33d850549jpeg.jpeg',
-        'https://fuss10.elemecdn.com/0/6f/e35ff375812e6b0020b6b4e8f9583jpeg.jpeg',
-        'https://fuss10.elemecdn.com/9/bb/e27858e973f5d7d3904835f46abbdjpeg.jpeg',
-        'https://fuss10.elemecdn.com/d/e6/c4d93a3805b3ce3f323f7974e6f78jpeg.jpeg',
-        'https://fuss10.elemecdn.com/3/28/bbf893f792f03a54408b3b7a7ebf0jpeg.jpeg',
-        'https://fuss10.elemecdn.com/2/11/6535bcfb26e4c79b48ddde44f4b6fjpeg.jpeg'
-      ]
+      activeName: PictureType.backgroundPictrue,
+      pictures: [],
+      picturesPreview: [],
+      dialogVisible: false,
+      pictureType: PictureType.backgroundPictrue
     }
   },
   computed: {
-    uploadHeader() {
-      return { token: getToken() }
+    pictureTypes() {
+      return pictureTypes
+    },
+    isBigPicture() {
+      return this.pictureType === PictureType.backgroundPictrue ||
+            this.pictureType === PictureType.articleHeadPicture ||
+            this.pictureType === PictureType.articleContentPciture
     }
+  },
+  created() {
+    this.getPicture()
   },
   methods: {
     tabClick(tab) {
-      console.log(tab.name)
+      this.pictureType = tab.name
+      this.getPicture()
     },
-    handleAvatarSuccess(res, file) {
-      console.log(res)
-      console.log(file)
-      this.imageUrl = URL.createObjectURL(file.raw)
+    async getPicture() {
+      const { data } = await find(FileType.picture, this.pictureType)
+      this.picturesPreview = data.map(item => item.url)
+      this.pictures = data
     },
-    beforeAvatarUpload(file) {
-      const isImg = file.type.startsWith('image/')
-      const isLt2M = file.size / 1024 / 1024 < 2
-
-      if (!isImg) {
-        this.$message.error('the file must be a pictrue!')
-      }
-      if (!isLt2M) {
-        this.$message.error('the file size must be less then 2M!')
-      }
-      return isImg && isLt2M
+    handleClip(url) {
+      const uploadUrl = document.getElementById('uploadUrl')
+      uploadUrl.value = url
+      uploadUrl.select()
+      document.execCommand('copy')
+      this.$message.success('copy successfully')
     }
   }
 }
 </script>
 
-<style lang="scss">
-.image-slot {
+<style scoped lang="scss">
+@import '@/styles/variables.scss';
+
+.pictures-container {
+  display: flex;
+  flex-wrap: wrap;
+}
+.picture-wrapper {
+  position: relative;
+  padding: 10px;
+}
+.picture {
+  vertical-align: middle;
+  width: 100%;
   height: 100%;
 }
-.avatar-uploader .el-upload {
-  border: 1px dashed #d9d9d9;
-  border-radius: 6px;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
+
+.image-slot {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: whitesmoke;
+  color: #ccc;
+  font-size: 24px;
+  span {
+    font-size: 14px;
+    padding: 2px;
+  }
 }
-.avatar-uploader .el-upload:hover {
-  border-color: #409eff;
+.w-s .meta {
+  padding: 12px;
 }
-.avatar-uploader-icon {
-  font-size: 28px;
-  color: #8c939d;
-  width: 178px;
-  height: 178px;
-  line-height: 178px;
-  text-align: center;
+.meta {
+  position: absolute;
+  padding: 16px 24px;
+  margin: 10px;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  opacity: 1;
+  color: white;
+  background-color: rgba($color: #000000, $alpha: 0.5);
+  transition: all 0.5s;
+  p {
+    margin-top: 0;
+    margin-bottom: 12px;
+    opacity: 0.85;
+    transition: all 0.5;
+    &:last-child {
+      margin-bottom: 0;
+    }
+    &.link:hover {
+      opacity: 1;
+      color: $menuActiveText;
+      cursor: pointer;
+    }
+  }
+  .controls {
+    display: flex;
+    p {
+      margin-bottom: 0;
+      margin-right: 24px;
+    }
+  }
 }
-.avatar {
-  width: 278px;
-  height: 178px;
-  display: block;
+.picture-wrapper:hover .meta{
+  opacity: 1;
+}
+.w-b {
+  width: 100%;
+  height: 300px;
+}
+.w-s {
+  width: 50%;
+  height: 200px;
+}
+@media (min-width: 576px) {
+  .w-s {
+    width: 200px;
+  }
+  .w-b {
+    width: 100%;
+  }
+}
+@media (min-width: 768px) {
+  .w-b {
+    width: 50%;
+    height: 300px;
+  }
+}
+@media (min-width: 1200px) {
+  .w-b {
+    height: 400px;
+  }
+}
+@media (min-width: 1400px) {
+  .w-b {
+    width: 33.33%;
+    height: 400px;
+  }
+}
+@media (min-width: 1921px) {
+  .w-b {
+    width: 25%;
+    height: 350px;
+  }
 }
 </style>

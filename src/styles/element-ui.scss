@@ -47,3 +47,8 @@
 .el-range-separator {
   box-sizing: content-box;
 }
+
+.el-image-viewer__img {
+  max-width: 80% !important;
+  max-height: 80% !important;
+}
