@@ -47,17 +47,25 @@
         <el-button type="warning" @click="reset('articleForm')">reset</el-button>
       </el-form-item>
     </el-form>
+    <floating-btn @click.native="dialogVisible = true" />
+    <el-dialog title="upload" :visible.sync="dialogVisible">
+      <upload file-type="picture" />
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import { Editor } from '@toast-ui/vue-editor'
 import { getCategories } from '@/api/category'
+import FloatingBtn from '@/components/FloatingBtn'
+import Upload from '@/components/upload'
 import { createArticle, getArticle, updateArticle } from '@/api/article'
 export default {
   name: 'Editor',
   components: {
-    editor: Editor
+    editor: Editor,
+    FloatingBtn,
+    Upload
   },
   props: {
     isEdit: {
@@ -68,7 +76,8 @@ export default {
   data() {
     return {
       form: {},
-      categories: []
+      categories: [],
+      dialogVisible: false
     }
   },
   computed: {

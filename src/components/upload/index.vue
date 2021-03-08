@@ -70,6 +70,7 @@ import service from '@/utils/request'
 import { getToken } from '@/utils/auth'
 import { unlink } from '@/api/album'
 import { fileTypes, pictureTypes, FileType } from './type'
+import copy from '@/utils/copy'
 export default {
   name: 'Upload',
   props: {
@@ -138,12 +139,8 @@ export default {
       }
     },
     handleClip(file) {
-      const uploadUrl = document.getElementById('uploadUrl')
       const { url } = file.response.data
-      uploadUrl.value = url
-      uploadUrl.select()
-      document.execCommand('copy')
-      this.$message.success('copy successfully')
+      copy(url)
     },
     fileTypeChange() {
       if (this.upload.fileType !== FileType.picture) {

@@ -33,7 +33,7 @@
             <p class="name">{{ picture.name || 'Unnamed' }}</p>
             <p v-if="isBigPicture" class="desc">{{ picture.desc || 'No description information' }}</p>
             <div class="controls">
-              <p class="link" @click="handleClip(picture.url)">
+              <p v-copy="picture.url" class="link">
                 <span v-if="isBigPicture">link</span>
                 <i class="el-icon-paperclip" />
               </p>
@@ -63,10 +63,14 @@ import Upload from '@/components/upload'
 import FloatingBtn from '@/components/FloatingBtn'
 import { FileType, PictureType, pictureTypes } from '@/components/upload/type'
 import { find } from '@/api/album'
+import copy from '@/directive/copy'
 export default {
   components: {
     Upload,
     FloatingBtn
+  },
+  directives: {
+    copy
   },
   data() {
     return {
@@ -99,13 +103,6 @@ export default {
       const { data } = await find(FileType.picture, this.pictureType)
       this.picturesPreview = data.map(item => item.url)
       this.pictures = data
-    },
-    handleClip(url) {
-      const uploadUrl = document.getElementById('uploadUrl')
-      uploadUrl.value = url
-      uploadUrl.select()
-      document.execCommand('copy')
-      this.$message.success('copy successfully')
     }
   }
 }
