@@ -116,6 +116,7 @@ export default {
       this.isEdit
         ? await updateArticle(this.$route.params.id, data)
         : await createArticle(data)
+      this.$router.push({ name: 'Article' })
       this.$message({
         type: 'success',
         message: `${this.isEdit ? 'update' : 'create'} article success`

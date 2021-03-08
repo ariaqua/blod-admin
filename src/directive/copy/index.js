@@ -1,25 +1,9 @@
-import { Message } from 'element-ui'
+import copy from '@/utils/copy'
 
 export default {
   bind(el, { value }) {
     el.$value = value
-    el.handler = () => {
-      if (!el.$value) return
-
-      const textarea = document.createElement('textarea')
-      textarea.readOnly = 'readonly'
-      textarea.style.position = 'absolute'
-      textarea.style.left = '-9999px'
-      textarea.value = el.$value
-      document.body.appendChild(textarea)
-
-      textarea.select()
-      const result = document.execCommand('Copy')
-      if (result) {
-        Message.success('copy successfully')
-      }
-      document.body.removeChild(textarea)
-    }
+    el.handler = copy.bind(el, el.$value)
 
     el.addEventListener('click', el.handler)
   },
