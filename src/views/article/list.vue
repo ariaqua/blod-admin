@@ -81,7 +81,7 @@ export default {
   methods: {
     async getArticles() {
       const { data } = await getArticles()
-      this.articles = data
+      this.articles = data[0]
     },
 
     remove(row) {

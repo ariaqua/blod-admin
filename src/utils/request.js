@@ -72,8 +72,9 @@ service.interceptors.response.use(
     }
   },
   error => {
+    console.dir(error)
     const statusCode = error.response.status
-    if (statusCode === 401 || statusCode === 403) {
+    if (!error.config.url.endsWith('login') && (statusCode === 401 || statusCode === 403)) {
       MessageBox.confirm('You have been logged out, you can cancel to stay on this page, or log in again', 'Confirm logout', {
         confirmButtonText: 'Re-Login',
         cancelButtonText: 'Cancel',

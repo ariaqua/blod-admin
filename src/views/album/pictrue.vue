@@ -10,7 +10,7 @@
       >
         <div v-for="picture in pictures" :key="picture.id" :class="['picture-wrapper', isBigPicture ? 'w-b' : 'w-s']">
           <el-image
-            :src="picture.url"
+            :src="'/'+picture.url"
             lazy
             fit="cover"
             :preview-src-list="picturesPreview"
