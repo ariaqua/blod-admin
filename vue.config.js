@@ -6,6 +6,8 @@ function resolve(dir) {
   return path.join(__dirname, dir)
 }
 
+const isDev = process.env.NODE_ENV === 'development'
+
 const name = defaultSettings.title || 'vue Admin Template' // page title
 
 // If your port is set to 80,
@@ -24,10 +26,10 @@ module.exports = {
    * In most cases please use '/' !!!
    * Detail: https://cli.vuejs.org/config/#publicpath
    */
-  publicPath: '/admin',
+  publicPath: isDev ? '/admin' : '/',
   outputDir: 'dist',
   assetsDir: 'static',
-  lintOnSave: process.env.NODE_ENV === 'development',
+  lintOnSave: isDev,
   productionSourceMap: false,
   devServer: {
     port: port,

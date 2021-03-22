@@ -29,6 +29,7 @@ export default {
 <style>
 .floating-btn {
   position: fixed;
+  z-index: 10;
 }
 .floating-btn .el-button {
   width: 56px;
