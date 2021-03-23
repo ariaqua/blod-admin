@@ -55,6 +55,7 @@
       :headers="uploadHeader"
       :list-type="listType"
       :before-upload="beforeUpload"
+      :on-success="uploaded"
     >
       <el-button size="small" type="primary">upload</el-button>
       <div slot="tip" class="el-upload__tip tips">
@@ -177,6 +178,9 @@ export default {
         return true
       }
       return false
+    },
+    uploaded() {
+      this.$emit('uploaded')
     }
   }
 }

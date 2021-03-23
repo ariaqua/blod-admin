@@ -41,7 +41,7 @@
                 <span v-if="isBigPicture">edit</span>
                 <i class="el-icon-edit" />
               </p>
-              <p class="link">
+              <p class="link" @click="remove(picture.id, picture.url)">
                 <span v-if="isBigPicture">remove</span>
                 <i class="el-icon-delete" />
               </p>
@@ -53,7 +53,7 @@
     </el-tabs>
     <floating-btn @click.native="dialogVisible = true" />
     <el-dialog title="upload" :visible.sync="dialogVisible">
-      <upload file-type="picture" />
+      <upload file-type="picture" @uploaded="uploaded" />
     </el-dialog>
   </div>
 </template>
@@ -62,7 +62,7 @@
 import Upload from '@/components/upload'
 import FloatingBtn from '@/components/FloatingBtn'
 import { FileType, PictureType, pictureTypes } from '@/components/upload/type'
-import { find } from '@/api/album'
+import { find, remove } from '@/api/album'
 import copy from '@/directive/copy'
 export default {
   components: {
@@ -103,6 +103,14 @@ export default {
       const { data } = await find(FileType.picture, this.pictureType)
       this.picturesPreview = data.map(item => item.url)
       this.pictures = data
+    },
+    async remove(id, url) {
+      const { data } = await remove(FileType.picture, [{ id, url }])
+      this.$message.success(JSON.stringify(data))
+      this.getPicture()
+    },
+    uploaded() {
+      this.getPicture()
     }
   }
 }
