@@ -105,9 +105,15 @@ export default {
       this.pictures = data
     },
     async remove(id, url) {
-      const { data } = await remove(FileType.picture, [{ id, url }])
-      this.$message.success(JSON.stringify(data))
-      this.getPicture()
+      this.$confirm('Are you sure to delete this picture', 'tip', {
+        confirmButtonText: 'confirm',
+        cancelButtonText: 'cancel',
+        type: 'warning'
+      }).then(async() => {
+        await remove(FileType.picture, [{ id, url }])
+        this.$message.success('Delete picture successfully')
+        this.getPicture()
+      }).catch(() => {})
     },
     uploaded() {
       this.getPicture()
