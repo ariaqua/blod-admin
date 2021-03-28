@@ -51,7 +51,6 @@
       :action="baseUrl + '/album/uploadFile'"
       :data="upload"
       :on-preview="handleClip"
-      :on-remove="handleRemove"
       :headers="uploadHeader"
       :list-type="listType"
       :before-upload="beforeUpload"
@@ -69,7 +68,7 @@
 <script>
 import service from '@/utils/request'
 import { getToken } from '@/utils/auth'
-import { unlink } from '@/api/album'
+// import { unlink } from '@/api/album'
 import { fileTypes, pictureTypes, FileType } from './type'
 import copy from '@/utils/copy'
 export default {
@@ -131,14 +130,14 @@ export default {
     tabClick(tab) {
       console.log(tab.name)
     },
-    async handleRemove(file) {
-      if (file && file.response && file.response.data) {
-        const { url } = file.response.data
-        console.log(file)
-        await unlink({ url })
-        this.$message.success('unlink file success!')
-      }
-    },
+    // async handleRemove(file) {
+    //   if (file && file.response && file.response.data) {
+    //     const { url } = file.response.data
+    //     console.log(file)
+    //     await unlink({ url })
+    //     this.$message.success('unlink file success!')
+    //   }
+    // },
     handleClip(file) {
       const { url } = file.response.data
       copy(url)

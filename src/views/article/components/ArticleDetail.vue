@@ -40,7 +40,7 @@
       <el-form-item label="summary">
         <el-input v-model="form.summary" :autosize="{ minRows: 2, maxRows: 4 }" type="textarea" />
       </el-form-item>
-      <editor ref="editor" height="400px" />
+      <editor ref="editor" :options="editorOptions" height="400px" />
       <el-form-item style="margin-top: 24px">
         <el-button type="success" @click="priview">priview</el-button>
         <el-button type="primary" @click="submit">submit</el-button>
@@ -60,6 +60,7 @@ import { getCategories } from '@/api/category'
 import FloatingBtn from '@/components/FloatingBtn'
 import Upload from '@/components/upload'
 import { createArticle, getArticle, updateArticle } from '@/api/article'
+import editorOptions from './editorOpctions'
 export default {
   name: 'Editor',
   components: {
@@ -77,7 +78,8 @@ export default {
     return {
       form: {},
       categories: [],
-      dialogVisible: false
+      dialogVisible: false,
+      editorOptions: editorOptions
     }
   },
   computed: {
