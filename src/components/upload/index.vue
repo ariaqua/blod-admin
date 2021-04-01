@@ -128,7 +128,6 @@ export default {
   },
   methods: {
     tabClick(tab) {
-      console.log(tab.name)
     },
     // async handleRemove(file) {
     //   if (file && file.response && file.response.data) {

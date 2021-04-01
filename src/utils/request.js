@@ -67,12 +67,10 @@ service.interceptors.response.use(
       // }
       return Promise.reject(new Error(res.message || 'Error'))
     } else {
-      console.log(res)
       return res
     }
   },
   error => {
-    console.dir(error)
     const statusCode = error.response.status
     if (!error.config.url.endsWith('login') && (statusCode === 401 || statusCode === 403)) {
       MessageBox.confirm('You have been logged out, you can cancel to stay on this page, or log in again', 'Confirm logout', {

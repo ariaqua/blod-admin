@@ -1,7 +1,6 @@
 import request from '@/utils/request'
 
 export function unlink(data) {
-  console.log(data)
   return request({
     url: 'album/unlink',
     method: 'delete',
@@ -26,7 +25,6 @@ export function findOne(filetype, id) {
 }
 
 export function remove(filetype, data) {
-  console.log(filetype, data)
   return request({
     url: `album/${filetype}`,
     method: 'delete',
