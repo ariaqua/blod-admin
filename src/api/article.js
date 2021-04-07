@@ -2,8 +2,9 @@ import request from '@/utils/request'
 
 export function getArticles() {
   return request({
-    url: 'article',
-    method: 'get'
+    url: 'article/all',
+    method: 'get',
+    params: { article_state: 'all' }
   })
 }
 
