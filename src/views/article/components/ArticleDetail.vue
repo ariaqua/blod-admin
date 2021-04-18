@@ -111,10 +111,11 @@ export default {
     },
 
     async submit() {
-      const data = this.form
+      const data = Object.assign({}, this.form)
       const formattedCategories = data.categories.map(category => ({ id: category }))
       data.categories = formattedCategories
       data.content = this.$refs.editor.invoke('getHtml')
+      console.log(data)
       this.isEdit
         ? await updateArticle(this.$route.params.id, data)
         : await createArticle(data)
